@@ -1,16 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://cuguwl82xowvp"]
+[gd_scene load_steps=4 format=3 uid="uid://c5230lqu5g55i"]
 
 [ext_resource type="Script" path="res://addons/tutor/src/tutor.gd" id="1_kysr6"]
-[ext_resource type="Shader" path="res://addons/tutor/res/dim.gdshader" id="2_xfur4"]
+[ext_resource type="Shader" path="res://addons/tutor/src/dim.gdshader" id="2_4ehal"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uose7"]
-shader = ExtResource("2_xfur4")
+shader = ExtResource("2_4ehal")
 shader_parameter/border_color = Color(0.439216, 0.729412, 0.980392, 1)
 shader_parameter/border_size = 1.0
-shader_parameter/rect0 = Rect2(8, 46, 276, 473)
-shader_parameter/rect1 = Rect2(1500, 46, 412, 713)
-shader_parameter/rect2 = Rect2(8, 527, 276, 474)
-shader_parameter/rect3 = Rect2(1500, 767, 412, 234)
+shader_parameter/rect0 = Rect2(8, 46, 270, 473)
+shader_parameter/rect1 = Rect2(0, 0, 0, 0)
+shader_parameter/rect2 = Rect2(0, 0, 0, 0)
+shader_parameter/rect3 = Rect2(0, 0, 0, 0)
 
 [node name="Tutor" type="ScrollContainer"]
 custom_minimum_size = Vector2(256, 196)
@@ -21,39 +21,72 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_kysr6")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="TabContainer" type="TabContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
+[node name="Steps" type="RichTextLabel" parent="TabContainer"]
+layout_mode = 2
+text = "Tutorial
+	Welcome to the tutorial!
+"
+
+[node name="Task" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="TabContainer/Task"]
 layout_mode = 2
 size_flags_vertical = 3
 text = "Welcome to Godot Tutor!"
 
-[node name="Buttons" type="HBoxContainer" parent="VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="TabContainer/Task"]
 layout_mode = 2
 
-[node name="Back" type="Button" parent="VBoxContainer/Buttons"]
+[node name="Back" type="Button" parent="TabContainer/Task/Buttons"]
 custom_minimum_size = Vector2(100, 36)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Back"
 
-[node name="Current" type="Label" parent="VBoxContainer/Buttons"]
+[node name="Current" type="Label" parent="TabContainer/Task/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 6
 text = "(1/1)"
 horizontal_alignment = 1
 
-[node name="Next" type="Button" parent="VBoxContainer/Buttons"]
+[node name="Next" type="Button" parent="TabContainer/Task/Buttons"]
 custom_minimum_size = Vector2(100, 36)
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Next"
 
+[node name="Raw" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="TextEdit" type="TextEdit" parent="TabContainer/Raw"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "#Tutorial
+##
+Welcome to the tutorial!
+##
+This is a new dialog.
+##
+Here is another."
+
+[node name="Save" type="Button" parent="TabContainer/Raw"]
+custom_minimum_size = Vector2(100, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "Save"
+
 [node name="Overlay" type="Popup" parent="."]
-unique_name_in_owner = true
 transparent_bg = true
 mode = 2
 unresizable = false
@@ -70,4 +103,4 @@ grow_vertical = 2
 size_flags_horizontal = 3
 color = Color(0, 0, 0, 0.784314)
 
-[connection signal="pressed" from="VBoxContainer/Buttons/Next" to="." method="_on_next_pressed"]
+[connection signal="pressed" from="TabContainer/Task/Buttons/Next" to="." method="_on_next_pressed"]

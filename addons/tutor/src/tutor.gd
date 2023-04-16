@@ -24,9 +24,18 @@ var import_rect:
 var editor_interface : EditorInterface
 var _scene_tree_dock # _*_dock's are set by _find_hidden_docks
 var _import_dock
+var _node_dock
 
-@onready var overlay = %Overlay
-@onready var bg := %Overlay/BG
+@onready var overlay = $Overlay
+@onready var bg := $Overlay/BG
+@onready var steps = $TabContainer/Steps
+@onready var raw_text = $TabContainer/Raw/TextEdit
+
+
+func _ready():
+	var tutorial := preload("res://addons/tutor/src/tutorial.gd").new()
+	tutorial.parse_text(raw_text.text)
+	steps.text = tutorial.get_steps_string()
 
 
 func _find_hidden_docks(): # brute searching for docks not exposed by the engine
@@ -43,8 +52,8 @@ func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 
 
 func _on_next_pressed():
-	if !_scene_tree_dock: # find docks on first overlay popup
-		_find_hidden_docks()
+	#if !_scene_tree_dock: # find docks on first overlay popup
+	_find_hidden_docks()
 	
 	overlay.position = get_window().position
 	overlay.size = get_window().size
@@ -52,6 +61,9 @@ func _on_next_pressed():
 	
 	create_dialog("Check out this Scene Tree!")
 	highlit_rects = [scene_tree_rect]
+	
+	if !editor_interface.is_plugin_enabled("Tutor"):
+		queue_free()
 
 
 func create_dialog(text): # popup dialogs that pause progression until dismissed
