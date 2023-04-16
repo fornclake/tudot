@@ -5,10 +5,10 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uose7"]
 shader = ExtResource("2_xfur4")
-shader_parameter/border_color = Color(0.945098, 0.854902, 0.905882, 1)
-shader_parameter/border_size = 5.0
+shader_parameter/border_color = Color(0.439216, 0.729412, 0.980392, 1)
+shader_parameter/border_size = 1.0
 shader_parameter/rect0 = Rect2(1504, 171, 404, 584)
-shader_parameter/rect1 = Rect2(1504, 801, 404, 196)
+shader_parameter/rect1 = Rect2(0, 0, 0, 0)
 shader_parameter/rect2 = Rect2(0, 0, 0, 0)
 shader_parameter/rect3 = Rect2(0, 0, 0, 0)
 
@@ -52,18 +52,14 @@ layout_mode = 2
 size_flags_horizontal = 8
 text = "Next"
 
-[node name="Popup" type="Popup" parent="."]
+[node name="Overlay" type="Popup" parent="."]
 unique_name_in_owner = true
 transparent_bg = true
 mode = 2
 unresizable = false
 transparent = true
-mouse_passthrough = true
 
-[node name="Draw" type="Node2D" parent="Popup"]
-visible = false
-
-[node name="Dimmer" type="ColorRect" parent="Popup"]
+[node name="BG" type="ColorRect" parent="Overlay"]
 clip_children = 2
 material = SubResource("ShaderMaterial_uose7")
 anchors_preset = 15
@@ -73,19 +69,5 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 color = Color(0, 0, 0, 0.784314)
-
-[node name="Label" type="Label" parent="Popup"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = 96.0
-offset_bottom = 96.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "The inspector is highlighted!"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [connection signal="pressed" from="VBoxContainer/Buttons/Next" to="." method="_on_next_pressed"]
