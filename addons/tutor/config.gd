@@ -3,6 +3,7 @@ extends EditorPlugin
 
 var dock
 
+
 func _enter_tree():
 	dock = preload("res://addons/tutor/ui/dock.tscn").instantiate()
 	dock.editor_interface = get_editor_interface()

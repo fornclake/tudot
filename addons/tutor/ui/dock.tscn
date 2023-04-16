@@ -5,8 +5,10 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uose7"]
 shader = ExtResource("2_xfur4")
-shader_parameter/rect0 = Rect2(1652, 801, 256, 196)
-shader_parameter/rect1 = Rect2(1652, 171, 256, 584)
+shader_parameter/border_color = Color(0.945098, 0.854902, 0.905882, 1)
+shader_parameter/border_size = 5.0
+shader_parameter/rect0 = Rect2(1504, 171, 404, 584)
+shader_parameter/rect1 = Rect2(1504, 801, 404, 196)
 shader_parameter/rect2 = Rect2(0, 0, 0, 0)
 shader_parameter/rect3 = Rect2(0, 0, 0, 0)
 
@@ -56,6 +58,10 @@ transparent_bg = true
 mode = 2
 unresizable = false
 transparent = true
+mouse_passthrough = true
+
+[node name="Draw" type="Node2D" parent="Popup"]
+visible = false
 
 [node name="Dimmer" type="ColorRect" parent="Popup"]
 clip_children = 2
