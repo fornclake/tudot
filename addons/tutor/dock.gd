@@ -42,6 +42,18 @@ func _ready():
 	_set_shader_parameters()
 
 
+func _on_go_pressed():
+	if !_scene_tree_dock:
+		_find_hidden_docks()
+	
+	task.text = tutorial.text
+	
+	for step in tutorial.steps:
+		await play_step(step)
+	
+	overlay.hide()
+
+
 func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
 	for i in range(0,MAX_RECTS):
 		var param = highlit_rects[i] if i in range(0,highlit_rects.size()) else Rect2(0,0,0,0)
@@ -63,22 +75,17 @@ func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 	_import_dock = target_parent.find_child("Import", true, false)
 
 
-func _on_go_pressed():
-	if !_scene_tree_dock:
-		_find_hidden_docks()
-	
-	task.text = tutorial.text
-	
-	for step in tutorial.steps:
-		await play_step(step)
-	
-	overlay.hide()
+func play_step(step : Tutorial.Step):
+	var dialogs := step.dialogs
+	while dialogs.size() > 0:
+		await create_dialog(dialogs[0].title, dialogs[0].text)
+		dialogs.pop_front()
 
 
 func create_dialog(title, text): # popup dialogs that pause progression until dismissed
 	show_overlay()
 	
-	var dialog = preload("res://addons/tutor/ui/next_dialog.tscn").instantiate()
+	var dialog = preload("res://addons/tutor/dialog.tscn").instantiate()
 	overlay.visibility_changed.connect(dialog.queue_free) # escape if overlay is closed
 	overlay.add_child(dialog)
 	
@@ -88,13 +95,6 @@ func create_dialog(title, text): # popup dialogs that pause progression until di
 	await dialog.get_node(dialog.get_meta("button")).pressed
 	
 	dialog.queue_free()
-
-
-func play_step(step : Tutorial.Step):
-	var dialogs := step.dialogs
-	while dialogs.size() > 0:
-		await create_dialog(dialogs[0].title, dialogs[0].text)
-		dialogs.pop_front()
 
 
 func show_overlay():

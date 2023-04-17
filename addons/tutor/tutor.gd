@@ -4,7 +4,7 @@ var dock
 
 
 func _enter_tree():
-	dock = preload("res://addons/tutor/ui/dock.tscn").instantiate()
+	dock = preload("res://addons/tutor/dock.tscn").instantiate()
 	dock._editor_interface = get_editor_interface() # :)
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
 
