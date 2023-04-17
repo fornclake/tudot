@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="Tutorial" load_steps=2 format=3 uid="uid://bt6hkypatsku7"]
+
+[ext_resource type="Script" path="res://addons/tutor/src/tutorial.gd" id="1_p6aql"]
+
+[resource]
+script = ExtResource("1_p6aql")
+text = "
+# First step
+## Dialog
+Dialogs can be defined using two hash symbols followed by its title.
+
+## 
+Dialog definitions with no titles will use the last title.
+
+
+# Second step
+## 
+Steps with no dialog titles will use the step title.
+
+## New Title
+Now the title has changed."

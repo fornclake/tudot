@@ -1,6 +1,8 @@
 @tool
 extends ScrollContainer
 
+@export var tutorial : Tutorial
+
 const MAX_RECTS = 4 # amount of shader uniforms in Overlay/BG
 
 # holds up to 4 rectangles that will not be dimmed while the overlay is visible
@@ -28,14 +30,23 @@ var _node_dock
 
 @onready var overlay = $Overlay
 @onready var bg := $Overlay/BG
-@onready var steps = $TabContainer/Steps
-@onready var raw_text = $TabContainer/Raw/TextEdit
-
+@onready var steps = %Steps
 
 func _ready():
-	var tutorial := preload("res://addons/tutor/src/tutorial.gd").new()
-	tutorial.parse_text(raw_text.text)
+	tutorial.updated.connect(_update_steps_text)
+	_update_steps_text()
+
+
+func _update_steps_text():
 	steps.text = tutorial.get_steps_string()
+
+
+func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
+	for i in range(0,MAX_RECTS):
+		var param = highlit_rects[i] if i in range(0,highlit_rects.size()) else Rect2(0,0,0,0)
+		bg.material.set_shader_parameter(str("rect",i), param)
+	
+	bg.queue_redraw()
 
 
 func _find_hidden_docks(): # brute searching for docks not exposed by the engine
@@ -51,19 +62,33 @@ func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 	_import_dock = target_parent.find_child("Import", true, false)
 
 
-func _on_next_pressed():
-	#if !_scene_tree_dock: # find docks on first overlay popup
-	_find_hidden_docks()
+func _on_go_pressed():
+	if !_scene_tree_dock: # find docks on first overlay popup
+		_find_hidden_docks()
 	
+	
+	highlit_rects = [inspector_rect]
+	
+	dim_screen()
+	tutorial.refresh()
+	
+	for step in tutorial.steps:
+		var dialogs : Array = step.dialogs
+		while dialogs.size() > 0:
+			await create_dialog(dialogs[0].text)
+			dialogs.pop_front()
+	
+	overlay.hide()
+
+
+func dim_screen():
 	overlay.position = get_window().position
 	overlay.size = get_window().size
 	overlay.popup()
-	
-	create_dialog("Check out this Scene Tree!")
-	highlit_rects = [scene_tree_rect]
-	
-	if !editor_interface.is_plugin_enabled("Tutor"):
-		queue_free()
+
+
+func undim_screen():
+	overlay.hide()
 
 
 func create_dialog(text): # popup dialogs that pause progression until dismissed
@@ -74,15 +99,11 @@ func create_dialog(text): # popup dialogs that pause progression until dismissed
 	var dialog_button : Button = dialog.get_node(dialog.get_meta("button"))
 	var dialog_label : RichTextLabel = dialog.get_node(dialog.get_meta("label"))
 	
-	dialog_button.pressed.connect(overlay.hide)
-	dialog_button.pressed.connect(dialog.queue_free)
-	
+	overlay.visibility_changed.connect(dialog.queue_free)
 	dialog_label.text = text
-
-
-func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
-	for i in range(0,MAX_RECTS):
-		var param = highlit_rects[i] if i in range(0,highlit_rects.size()) else Rect2(0,0,0,0)
-		bg.material.set_shader_parameter(str("rect",i), param)
 	
-	bg.queue_redraw()
+	await dialog_button.pressed
+	
+	dialog.queue_free()
+	
+	return true
