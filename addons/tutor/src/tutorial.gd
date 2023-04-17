@@ -49,12 +49,12 @@ func _parse_text(text : String):
 		while dialog_split.size() > 0:
 			var new_dialog = Dialog.new()
 			var title_split = dialog_split[0].split("\n", true, 1)
-			var title = title_split[0].strip_edges()
-			if not title.is_empty():
-				dialog_title = title
+			if not title_split[0].is_empty():
+				dialog_title = title_split[0]
 			
 			new_dialog.title = dialog_title
 			new_dialog.text = title_split[1]
+			
 			new_step.dialogs.append(new_dialog)
 			
 			dialog_split.remove_at(0)
@@ -68,10 +68,10 @@ func get_steps_string():
 	var string = ""
 	
 	for step in steps:
-		string += step.title + " {\n"
+		string += step.title + ":\n"
 		for dialog in step.dialogs:
-			string += "\t" + dialog.title + ": " + dialog.text.strip_edges(false, true) + "\n"
-		string += "}\n"
+			string += "\t" + dialog.title + ": " + dialog.text + "\n"
+		string += "\n"
 	
 	return string
 

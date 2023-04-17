@@ -33,12 +33,9 @@ var _node_dock
 @onready var steps = %Steps
 
 func _ready():
-	tutorial.updated.connect(_update_steps_text)
-	_update_steps_text()
-
-
-func _update_steps_text():
-	steps.text = tutorial.get_steps_string()
+	highlit_rects = []
+	_set_shader_parameters()
+	_find_hidden_docks()
 
 
 func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
@@ -63,19 +60,15 @@ func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 
 
 func _on_go_pressed():
-	if !_scene_tree_dock: # find docks on first overlay popup
-		_find_hidden_docks()
-	
-	
-	highlit_rects = [inspector_rect]
+	tutorial.refresh()
+	steps.text = tutorial.text
 	
 	dim_screen()
-	tutorial.refresh()
 	
 	for step in tutorial.steps:
 		var dialogs : Array = step.dialogs
 		while dialogs.size() > 0:
-			await create_dialog(dialogs[0].text)
+			await create_dialog(dialogs[0].text, dialogs[0].title)
 			dialogs.pop_front()
 	
 	overlay.hide()
@@ -91,19 +84,17 @@ func undim_screen():
 	overlay.hide()
 
 
-func create_dialog(text): # popup dialogs that pause progression until dismissed
+func create_dialog(text, title): # popup dialogs that pause progression until dismissed
 	var dialog = preload("res://addons/tutor/ui/next_dialog.tscn").instantiate()
+	overlay.visibility_changed.connect(dialog.queue_free) # escape if overlay is closed
 	overlay.add_child(dialog)
 	
-	# get node paths from metadata stored in dialog scene root. saves a script
-	var dialog_button : Button = dialog.get_node(dialog.get_meta("button"))
-	var dialog_label : RichTextLabel = dialog.get_node(dialog.get_meta("label"))
+	var title_node : Label = dialog.get_node(dialog.get_meta("title"))
+	var text_node : Label = dialog.get_node(dialog.get_meta("text"))
 	
-	overlay.visibility_changed.connect(dialog.queue_free)
-	dialog_label.text = text
+	title_node.text = title
+	text_node.text = text
 	
-	await dialog_button.pressed
+	await dialog.get_node(dialog.get_meta("button")).pressed
 	
 	dialog.queue_free()
-	
-	return true

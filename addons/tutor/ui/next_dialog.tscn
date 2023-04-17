@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://dj2jq6t7u56a0"]
+[gd_scene load_steps=3 format=3 uid="uid://dj2jq6t7u56a0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mcwcs"]
 bg_color = Color(0.211765, 0.239216, 0.290196, 1)
@@ -7,6 +7,9 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.439216, 0.729412, 0.980392, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_wraj4"]
+font_size = 14
 
 [node name="NextDialog" type="PanelContainer"]
 anchors_preset = 8
@@ -20,8 +23,10 @@ offset_right = 100.0
 offset_bottom = 50.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"Panel"
 theme_override_styles/panel = SubResource("StyleBoxFlat_mcwcs")
-metadata/label = NodePath("MarginContainer/VBoxContainer/RichTextLabel")
+metadata/title = NodePath("MarginContainer/VBoxContainer/Title")
+metadata/text = NodePath("MarginContainer/VBoxContainer/Text")
 metadata/button = NodePath("MarginContainer/VBoxContainer/Button")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -34,12 +39,17 @@ theme_override_constants/margin_bottom = 4
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer"]
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
+text = "test"
+label_settings = SubResource("LabelSettings_wraj4")
+horizontal_alignment = 1
+
+[node name="Text" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+focus_mode = 2
 text = "The inspector is highlighted!"
-fit_content = true
-autowrap_mode = 0
 
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(64, 32)
