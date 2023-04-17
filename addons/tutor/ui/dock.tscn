@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://ckoeptwrtc7dq"]
 
 [ext_resource type="Script" path="res://addons/tutor/src/tutor.gd" id="1_kysr6"]
 [ext_resource type="Shader" path="res://addons/tutor/src/dim.gdshader" id="2_4ehal"]
@@ -8,7 +8,7 @@
 shader = ExtResource("2_4ehal")
 shader_parameter/border_color = Color(0.439216, 0.729412, 0.980392, 1)
 shader_parameter/border_size = 1.0
-shader_parameter/rect0 = Rect2(1536, 46, 376, 713)
+shader_parameter/rect0 = Rect2(0, 0, 0, 0)
 shader_parameter/rect1 = Rect2(0, 0, 0, 0)
 shader_parameter/rect2 = Rect2(0, 0, 0, 0)
 shader_parameter/rect3 = Rect2(0, 0, 0, 0)
@@ -28,35 +28,28 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VSplitContainer" type="VBoxContainer" parent="Task"]
-layout_mode = 2
-size_flags_vertical = 3
-alignment = 1
-
-[node name="Task" type="RichTextLabel" parent="Task/VSplitContainer"]
-visible = false
-custom_minimum_size = Vector2(0, 64)
-layout_mode = 2
-size_flags_vertical = 3
-text = "Welcome to Godot Tutor!"
-
-[node name="Steps" type="RichTextLabel" parent="Task/VSplitContainer"]
+[node name="Text" type="RichTextLabel" parent="Task"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 3
-text = "First step:
-	Dialog: Dialogs can be defined using two hash symbols followed by its title.
+text = "Example script
 
-	Dialog: Dialog definitions with no titles will use the last title.
+# First step
 
+## Dialog
+Dialogs can be defined using two hash symbols followed by its title.
 
-Second step:
-	Second step: Steps with no dialog titles will use the step title.
+## 
+Dialog definitions with no titles will use the last title.
 
-	New Title: Now the title has changed.
+# Second step
 
-"
+## 
+Steps with no dialog titles will use the step title.
+
+## New Title
+Now the title has changed."
 
 [node name="Go" type="Button" parent="Task"]
 custom_minimum_size = Vector2(64, 26)

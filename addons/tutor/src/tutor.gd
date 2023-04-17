@@ -1,9 +1,9 @@
-@tool
-extends ScrollContainer
-
-@export var tutorial : Tutorial
+@tool extends ScrollContainer
+## Tutor dock.
 
 const MAX_RECTS = 4 # amount of shader uniforms in Overlay/BG
+
+@export var tutorial : Tutorial
 
 # holds up to 4 rectangles that will not be dimmed while the overlay is visible
 var highlit_rects : Array[Rect2] = []:
@@ -15,27 +15,31 @@ var highlit_rects : Array[Rect2] = []:
 var tutor_rect:
 	get: return get_parent().get_global_rect()
 var inspector_rect:
-	get: return editor_interface.get_inspector().get_node("../../").get_global_rect()
+	get: return _editor_interface.get_inspector().get_node("../../").get_global_rect()
 var file_system_rect:
-	get: return editor_interface.get_file_system_dock().get_parent().get_global_rect()
+	get: return _editor_interface.get_file_system_dock().get_parent().get_global_rect()
 var scene_tree_rect:
 	get: return _scene_tree_dock.get_parent().get_global_rect()
 var import_rect:
 	get: return _import_dock.get_parent().get_global_rect()
 
-var editor_interface : EditorInterface
-var _scene_tree_dock # _*_dock's are set by _find_hidden_docks
+# set by _find_hidden_docks
+var _scene_tree_dock
 var _import_dock
 var _node_dock
 
+var _editor_interface : EditorInterface
+
 @onready var overlay = $Overlay
 @onready var bg := $Overlay/BG
-@onready var steps = %Steps
+@onready var task = %Text
+
 
 func _ready():
+	task.text = tutorial.text
 	highlit_rects = []
+	
 	_set_shader_parameters()
-	_find_hidden_docks()
 
 
 func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
@@ -49,7 +53,7 @@ func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
 func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 	# searching from root would point us to the wrong "Scene" control
 	var target_parent # we will manually search for a target parent we can search from
-	for interface_child in editor_interface.get_base_control().get_children():
+	for interface_child in _editor_interface.get_base_control().get_children():
 		if interface_child is VBoxContainer:
 			for vbox_child in interface_child.get_children():
 				if vbox_child is HSplitContainer:
@@ -60,41 +64,40 @@ func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 
 
 func _on_go_pressed():
-	tutorial.refresh()
-	steps.text = tutorial.text
+	if !_scene_tree_dock:
+		_find_hidden_docks()
 	
-	dim_screen()
+	task.text = tutorial.text
 	
 	for step in tutorial.steps:
-		var dialogs : Array = step.dialogs
-		while dialogs.size() > 0:
-			await create_dialog(dialogs[0].text, dialogs[0].title)
-			dialogs.pop_front()
+		await play_step(step)
 	
 	overlay.hide()
 
 
-func dim_screen():
-	overlay.position = get_window().position
-	overlay.size = get_window().size
-	overlay.popup()
-
-
-func undim_screen():
-	overlay.hide()
-
-
-func create_dialog(text, title): # popup dialogs that pause progression until dismissed
+func create_dialog(title, text): # popup dialogs that pause progression until dismissed
+	show_overlay()
+	
 	var dialog = preload("res://addons/tutor/ui/next_dialog.tscn").instantiate()
 	overlay.visibility_changed.connect(dialog.queue_free) # escape if overlay is closed
 	overlay.add_child(dialog)
 	
-	var title_node : Label = dialog.get_node(dialog.get_meta("title"))
-	var text_node : Label = dialog.get_node(dialog.get_meta("text"))
-	
-	title_node.text = title
-	text_node.text = text
+	dialog.get_node(dialog.get_meta("title")).text = title
+	dialog.get_node(dialog.get_meta("text")).text = text
 	
 	await dialog.get_node(dialog.get_meta("button")).pressed
 	
 	dialog.queue_free()
+
+
+func play_step(step : Tutorial.Step):
+	var dialogs := step.dialogs
+	while dialogs.size() > 0:
+		await create_dialog(dialogs[0].title, dialogs[0].text)
+		dialogs.pop_front()
+
+
+func show_overlay():
+	overlay.position = get_window().position
+	overlay.size = get_window().size
+	overlay.popup()

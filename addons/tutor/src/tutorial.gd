@@ -1,11 +1,16 @@
-@tool
-class_name Tutorial extends Resource
-
-@export_multiline var text : String = ""
-
-var steps = []
+@tool class_name Tutorial extends Resource
+## Tutorial resource object.
+##
+## Parses steps and commands from markdown text.
 
 signal updated
+
+@export_multiline var text : String = "":
+	get:
+		_parse_text(text)
+		return text
+
+var steps = []
 
 class Step:
 	var title := "Tutorial"
@@ -46,15 +51,16 @@ func _parse_text(text : String):
 		var dialog_title = new_step.title
 		
 		# create dialog objects
-		while dialog_split.size() > 0:
+		while dialog_split.size() > 0: # try for
 			var new_dialog = Dialog.new()
 			var title_split = dialog_split[0].split("\n", true, 1)
+			
+			# update title if there is one
 			if not title_split[0].is_empty():
 				dialog_title = title_split[0]
 			
 			new_dialog.title = dialog_title
 			new_dialog.text = title_split[1]
-			
 			new_step.dialogs.append(new_dialog)
 			
 			dialog_split.remove_at(0)
@@ -62,19 +68,3 @@ func _parse_text(text : String):
 		steps.append(new_step)
 	
 	updated.emit()
-
-
-func get_steps_string():
-	var string = ""
-	
-	for step in steps:
-		string += step.title + ":\n"
-		for dialog in step.dialogs:
-			string += "\t" + dialog.title + ": " + dialog.text + "\n"
-		string += "\n"
-	
-	return string
-
-
-func refresh():
-	_parse_text(text)

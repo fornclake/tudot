@@ -9,7 +9,9 @@ border_width_bottom = 1
 border_color = Color(0.439216, 0.729412, 0.980392, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_wraj4"]
+line_spacing = 0.0
 font_size = 14
+outline_size = 1
 
 [node name="NextDialog" type="PanelContainer"]
 anchors_preset = 8
@@ -41,18 +43,20 @@ layout_mode = 2
 
 [node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 0
 text = "test"
 label_settings = SubResource("LabelSettings_wraj4")
 horizontal_alignment = 1
 
 [node name="Text" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-size_flags_vertical = 1
+size_flags_vertical = 3
 focus_mode = 2
 text = "The inspector is highlighted!"
 
 [node name="Button" type="Button" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(64, 32)
+custom_minimum_size = Vector2(64, 26)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Next"
