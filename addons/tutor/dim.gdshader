@@ -1,5 +1,9 @@
 shader_type canvas_item;
 
+// temp
+// swap rect uniforms for a masking color check later.
+// saves having to hard code rectangle checks
+
 uniform vec4 border_color : source_color;
 uniform float border_size = 10.0;
 

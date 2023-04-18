@@ -8,10 +8,10 @@
 shader = ExtResource("3_dt6qc")
 shader_parameter/border_color = Color(0.439216, 0.729412, 0.980392, 1)
 shader_parameter/border_size = 1.0
-shader_parameter/rect0 = Rect2(8, 46, 270, 473)
-shader_parameter/rect1 = Rect2(8, 527, 270, 474)
-shader_parameter/rect2 = Rect2(1368, 46, 544, 713)
-shader_parameter/rect3 = Rect2(1368, 767, 544, 234)
+shader_parameter/rect0 = Rect2(1642, 527, 270, 474)
+shader_parameter/rect1 = Rect2(0, 0, 0, 0)
+shader_parameter/rect2 = Rect2(0, 0, 0, 0)
+shader_parameter/rect3 = Rect2(0, 0, 0, 0)
 
 [node name="Tutor" type="ScrollContainer"]
 custom_minimum_size = Vector2(256, 196)
@@ -33,23 +33,27 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 3
-text = "Example script
-
-# First step
-
-## Dialog
-Dialogs can be defined using two hash symbols followed by its title.
+text = "Highlight tutorial
+# Highlights
 
 ## 
-Dialog definitions with no titles will use the last title.
+We can highlight editor docks too.
+;highlight scene_tree
+;highlight file_system
+;highlight inspector
+;highlight tutor
 
-# Second step
+## Scene
+;highlight scene_tree
 
-## 
-Steps with no dialog titles will use the step title.
+## FileSystem
+;highlight file_system
 
-## New Title
-Now the title has changed."
+## Inspector
+;highlight inspector
+
+## Tutor
+;highlight tutor"
 
 [node name="Go" type="Button" parent="Task"]
 custom_minimum_size = Vector2(64, 26)
@@ -74,4 +78,4 @@ grow_vertical = 2
 size_flags_horizontal = 3
 color = Color(0, 0, 0, 0.784314)
 
-[connection signal="pressed" from="Task/Go" to="." method="_on_go_pressed"]
+[connection signal="pressed" from="Task/Go" to="." method="_run_tutorial"]

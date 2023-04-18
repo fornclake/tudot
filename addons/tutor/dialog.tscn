@@ -59,4 +59,5 @@ text = "The inspector is highlighted!"
 custom_minimum_size = Vector2(64, 26)
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 10
 text = "Next"

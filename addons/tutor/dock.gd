@@ -1,14 +1,14 @@
 @tool extends ScrollContainer
 ## Tutor dock.
 
-const MAX_RECTS = 4 # amount of shader uniforms in Overlay/BG
+const MAX_RECTS = 4 # Maximum number of shader uniforms in Overlay/BG
 
 @export var tutorial : Tutorial
 
-# holds up to 4 rectangles that will not be dimmed while the overlay is visible
+# Rectangles passed to overlay shader
 var highlighted_rects : Array[Rect2] = []
 
-# rectangle getter functions. can't store rects because of window size changes
+# Rectangle getters for editor components
 var tutor_rect:
 	get: return get_parent().get_global_rect()
 var inspector_rect:
@@ -20,86 +20,90 @@ var scene_tree_rect:
 var import_rect:
 	get: return _import_dock.get_parent().get_global_rect()
 
-# set by _find_hidden_docks
+# Node references
+var _editor_interface : EditorInterface # set by plugin config when
+@onready var overlay_popup = $Overlay
+@onready var overlay_background := $Overlay/BG
+@onready var task_label = %Text
+
+# Hidden components set by _find_hidden_components
+var _hidden_components_found = false
 var _scene_tree_dock
 var _import_dock
 var _node_dock
 
-var _editor_interface : EditorInterface
-
-@onready var overlay = $Overlay
-@onready var bg := $Overlay/BG
-@onready var task = %Text
-
 
 func _ready():
-	task.text = tutorial.text
+	task_label.text = tutorial.text
 	highlighted_rects = []
-	
 	_set_shader_parameters()
 
 
-func _on_go_pressed():
-	if !_scene_tree_dock:
-		_find_hidden_docks()
-	
+func _run_tutorial():
 	tutorial.parse()
-	
-	task.text = tutorial.text
+	task_label.text = tutorial.text
 	
 	for step in tutorial.steps:
-		await play_step(step)
+		await _play_step(step)
 	
-	overlay.hide()
+	overlay_popup.hide()
 
 
-func _set_shader_parameters(): # set dim shader uniforms to highlighted_rects
-	for i in range(0,MAX_RECTS):
-		var param = highlighted_rects[i] if i in range(0,highlighted_rects.size()) else Rect2(0,0,0,0)
-		bg.material.set_shader_parameter(str("rect",i), param)
-	
-	bg.queue_redraw()
-
-
-func _find_hidden_docks(): # brute searching for docks not exposed by the engine
-	# searching from root would point us to the wrong "Scene" control
-	var target_parent # we will manually search for a target parent we can search from
+# Searches for editor components not exposed by the engine.
+func _find_hidden_components():
+	var target_parent # manually search for a target parent we can search from
 	for interface_child in _editor_interface.get_base_control().get_children():
 		if interface_child is VBoxContainer:
 			for vbox_child in interface_child.get_children():
 				if vbox_child is HSplitContainer:
 					target_parent = vbox_child
 	
+	# Set references accordingly
 	_scene_tree_dock = target_parent.find_child("Scene", true, false)
 	_import_dock = target_parent.find_child("Import", true, false)
 
 
-func play_step(step : Tutorial.Step):
-	var dialogs := step.dialogs
-	while dialogs.size() > 0:
-		await create_dialog(dialogs[0])
-		dialogs.pop_front()
-
-
-func create_dialog(dialog : Tutorial.Dialog): # popup dialogs that pause progression until dismissed
-	show_overlay()
+# Create a dialog and wait until it is dismissed.
+func _create_and_play_dialog(dialog : Tutorial.Dialog):
+	var new_dialog = _create_dialog(dialog)
 	
-	var new_dialog = preload("res://addons/tutor/dialog.tscn").instantiate()
-	overlay.visibility_changed.connect(new_dialog.queue_free) # escape if overlay is closed
-	overlay.add_child(new_dialog)
-	
-	
-	new_dialog.get_node(new_dialog.get_meta("title")).text = dialog.title
-	new_dialog.get_node(new_dialog.get_meta("text")).text = dialog.text
-	highlight_from_dialog(dialog)
+	_show_overlay()
+	overlay_popup.add_child(new_dialog)
+	overlay_popup.visibility_changed.connect(new_dialog.queue_free)
 	
 	await new_dialog.get_node(new_dialog.get_meta("button")).pressed
 	
 	new_dialog.queue_free()
 
 
-func highlight_from_dialog(dialog : Tutorial.Dialog):
+# Create a dialog instance from a Tutorial.Dialog object
+func _create_dialog(dialog: Tutorial.Dialog):
+	var new_dialog = preload("res://addons/tutor/dialog.tscn").instantiate()
+	var text_node = new_dialog.get_node(new_dialog.get_meta("text"))
+	
+	text_node.text = dialog.text
+	text_node.visible = !text_node.text.is_empty()
+	new_dialog.get_node(new_dialog.get_meta("title")).text = dialog.title
+	_highlight_from_dialog(dialog)
+	
+	return new_dialog
+
+
+## Play a single tutorial step.
+func _play_step(step : Tutorial.Step):
+	var dialogs := step.dialogs
+	while dialogs.size() > 0:
+		await _create_and_play_dialog(dialogs[0])
+		dialogs.pop_front()
+
+
+# Get rects to highlight from dialog.
+func _highlight_from_dialog(dialog : Tutorial.Dialog):
 	highlighted_rects = []
+	
+	if !_hidden_components_found:
+		_find_hidden_components()
+	
 	for highlight in dialog.highlights:
 		var rect : Rect2
 		match highlight:
@@ -112,7 +116,17 @@ func highlight_from_dialog(dialog : Tutorial.Dialog):
 	_set_shader_parameters()
 
 
-func show_overlay():
-	overlay.position = get_window().position
-	overlay.size = get_window().size
-	overlay.popup()
+# Set overlay shader uniforms to highlight components.
+func _set_shader_parameters():
+	for i in range(0,MAX_RECTS):
+		var param = highlighted_rects[i] if i in range(0,highlighted_rects.size()) else Rect2(0,0,0,0)
+		overlay_background.material.set_shader_parameter(str("rect",i), param)
+	
+	overlay_background.queue_redraw()
+
+
+## Configure and popup overlay.
+func _show_overlay():
+	overlay_popup.position = get_window().position
+	overlay_popup.size = get_window().size
+	overlay_popup.popup()
