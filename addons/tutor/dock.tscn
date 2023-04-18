@@ -1,17 +1,17 @@
 [gd_scene load_steps=5 format=3 uid="uid://c8vrlgdjdxvog"]
 
 [ext_resource type="Script" path="res://addons/tutor/dock.gd" id="1_rw4o7"]
-[ext_resource type="Resource" path="res://tutorials/dialogs.tres" id="2_jfgcd"]
+[ext_resource type="Resource" uid="uid://cc671kwfigg6n" path="res://tutorials/highlights.tres" id="2_4to47"]
 [ext_resource type="Shader" path="res://addons/tutor/dim.gdshader" id="3_dt6qc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uose7"]
 shader = ExtResource("3_dt6qc")
 shader_parameter/border_color = Color(0.439216, 0.729412, 0.980392, 1)
 shader_parameter/border_size = 1.0
-shader_parameter/rect0 = Rect2(0, 0, 0, 0)
-shader_parameter/rect1 = Rect2(0, 0, 0, 0)
-shader_parameter/rect2 = Rect2(0, 0, 0, 0)
-shader_parameter/rect3 = Rect2(0, 0, 0, 0)
+shader_parameter/rect0 = Rect2(8, 46, 270, 473)
+shader_parameter/rect1 = Rect2(8, 527, 270, 474)
+shader_parameter/rect2 = Rect2(1368, 46, 544, 713)
+shader_parameter/rect3 = Rect2(1368, 767, 544, 234)
 
 [node name="Tutor" type="ScrollContainer"]
 custom_minimum_size = Vector2(256, 196)
@@ -21,7 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rw4o7")
-tutorial = ExtResource("2_jfgcd")
+tutorial = ExtResource("2_4to47")
 
 [node name="Task" type="VBoxContainer" parent="."]
 layout_mode = 2

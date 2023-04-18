@@ -6,10 +6,7 @@ const MAX_RECTS = 4 # amount of shader uniforms in Overlay/BG
 @export var tutorial : Tutorial
 
 # holds up to 4 rectangles that will not be dimmed while the overlay is visible
-var highlit_rects : Array[Rect2] = []:
-	set(value):
-		highlit_rects = value
-		_set_shader_parameters()
+var highlighted_rects : Array[Rect2] = []
 
 # rectangle getter functions. can't store rects because of window size changes
 var tutor_rect:
@@ -37,7 +34,7 @@ var _editor_interface : EditorInterface
 
 func _ready():
 	task.text = tutorial.text
-	highlit_rects = []
+	highlighted_rects = []
 	
 	_set_shader_parameters()
 
@@ -45,6 +42,8 @@ func _ready():
 func _on_go_pressed():
 	if !_scene_tree_dock:
 		_find_hidden_docks()
+	
+	tutorial.parse()
 	
 	task.text = tutorial.text
 	
@@ -54,9 +53,9 @@ func _on_go_pressed():
 	overlay.hide()
 
 
-func _set_shader_parameters(): # set dim shader uniforms to highlit_rects
+func _set_shader_parameters(): # set dim shader uniforms to highlighted_rects
 	for i in range(0,MAX_RECTS):
-		var param = highlit_rects[i] if i in range(0,highlit_rects.size()) else Rect2(0,0,0,0)
+		var param = highlighted_rects[i] if i in range(0,highlighted_rects.size()) else Rect2(0,0,0,0)
 		bg.material.set_shader_parameter(str("rect",i), param)
 	
 	bg.queue_redraw()
@@ -78,23 +77,39 @@ func _find_hidden_docks(): # brute searching for docks not exposed by the engine
 func play_step(step : Tutorial.Step):
 	var dialogs := step.dialogs
 	while dialogs.size() > 0:
-		await create_dialog(dialogs[0].title, dialogs[0].text)
+		await create_dialog(dialogs[0])
 		dialogs.pop_front()
 
 
-func create_dialog(title, text): # popup dialogs that pause progression until dismissed
+func create_dialog(dialog : Tutorial.Dialog): # popup dialogs that pause progression until dismissed
 	show_overlay()
 	
-	var dialog = preload("res://addons/tutor/dialog.tscn").instantiate()
-	overlay.visibility_changed.connect(dialog.queue_free) # escape if overlay is closed
-	overlay.add_child(dialog)
+	var new_dialog = preload("res://addons/tutor/dialog.tscn").instantiate()
+	overlay.visibility_changed.connect(new_dialog.queue_free) # escape if overlay is closed
+	overlay.add_child(new_dialog)
 	
-	dialog.get_node(dialog.get_meta("title")).text = title
-	dialog.get_node(dialog.get_meta("text")).text = text
 	
-	await dialog.get_node(dialog.get_meta("button")).pressed
+	new_dialog.get_node(new_dialog.get_meta("title")).text = dialog.title
+	new_dialog.get_node(new_dialog.get_meta("text")).text = dialog.text
+	highlight_from_dialog(dialog)
 	
-	dialog.queue_free()
+	await new_dialog.get_node(new_dialog.get_meta("button")).pressed
+	
+	new_dialog.queue_free()
+
+
+func highlight_from_dialog(dialog : Tutorial.Dialog):
+	highlighted_rects = []
+	for highlight in dialog.highlights:
+		var rect : Rect2
+		match highlight:
+			"inspector": rect = inspector_rect
+			"tutor": rect = tutor_rect
+			"file_system": rect = file_system_rect
+			"scene_tree": rect = scene_tree_rect
+			"import": rect = import_rect
+		highlighted_rects.append(rect)
+	_set_shader_parameters()
 
 
 func show_overlay():

@@ -15,8 +15,8 @@ func _exit_tree():
 
 
 func re_enable():
-	#editor_interface.set_plugin_enabled("tutor", false)
-	editor_interface.set_plugin_enabled("editor_nav", false)
+	editor_interface.set_plugin_enabled("tutor", false)
+	#editor_interface.set_plugin_enabled("editor_nav", false)
 	await project_settings_changed
-	#editor_interface.set_plugin_enabled("tutor", true)
-	editor_interface.set_plugin_enabled("editor_nav", true)
+	editor_interface.set_plugin_enabled("tutor", true)
+	#editor_interface.set_plugin_enabled("editor_nav", true)

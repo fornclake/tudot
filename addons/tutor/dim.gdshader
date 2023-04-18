@@ -31,7 +31,7 @@ void fragment() {
 		color = border_color;
 	}
 	
-	// remove dim effect from highlit rectangles
+	// remove dim effect from highlighted rectangles
 	if (encloses(rect0, current_pixel) ||
 		encloses(rect1, current_pixel) ||
 		encloses(rect2, current_pixel) ||

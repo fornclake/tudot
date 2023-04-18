@@ -5,10 +5,7 @@
 
 signal updated
 
-@export_multiline var text : String = "":
-	get:
-		_parse_text(text)
-		return text
+@export_multiline var text : String = ""
 
 var steps = []
 
@@ -21,7 +18,7 @@ class Step:
 class Dialog:
 	var title = ""
 	var text = ""
-	var highlight = []
+	var highlights = []
 
 class Condition:
 	enum Type {ONE_SHOT, CONTINUOUS}
@@ -31,6 +28,8 @@ class Condition:
 	var operator : Operator = Operator.EQUALS
 	var requires : Array[Condition] = []
 
+func parse():
+	_parse_text(text)
 
 func _parse_text(text : String):
 	steps = []
@@ -59,8 +58,15 @@ func _parse_text(text : String):
 			if not title_split[0].is_empty():
 				dialog_title = title_split[0]
 			
+			var dialog_text = title_split[1]
+			var lines = dialog_text.split("\n")
+			for line in lines:
+				if line.begins_with(";highlight"):
+					new_dialog.highlights.append(line.trim_prefix(";highlight").strip_edges())
+					dialog_text = dialog_text.replace(line, "").strip_escapes()
+			
 			new_dialog.title = dialog_title
-			new_dialog.text = title_split[1]
+			new_dialog.text = dialog_text
 			new_step.dialogs.append(new_dialog)
 			
 			dialog_split.remove_at(0)
