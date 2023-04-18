@@ -3,6 +3,20 @@ extends GutTest
 @onready var tutorial = Tutorial.new()
 
 
+func test_all_tutorials():
+	var path = "res://tutorials/"
+	var dir = DirAccess.open(path)
+	var files = dir.get_files()
+	
+	for file in files:
+		if file.ends_with(".tres"):
+			var tutorial : Tutorial = load(path+file)
+			tutorial.parse()
+	
+	assert_has(files, "dialogs.tres")
+	assert_has(files, "highlights.tres")
+
+
 func test_empty_tutorial_text():
 	tutorial.parse("")
 	assert_eq(tutorial.steps.size(), 0)

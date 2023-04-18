@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c8vrlgdjdxvog"]
 
 [ext_resource type="Script" path="res://addons/tutor/dock.gd" id="1_rw4o7"]
-[ext_resource type="Resource" uid="uid://cc671kwfigg6n" path="res://tutorials/highlights.tres" id="2_4to47"]
+[ext_resource type="Resource" path="res://tutorials/dialogs.tres" id="2_s57vx"]
 [ext_resource type="Shader" path="res://addons/tutor/dim.gdshader" id="3_dt6qc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uose7"]
@@ -21,7 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rw4o7")
-tutorial = ExtResource("2_4to47")
+tutorial = ExtResource("2_s57vx")
 
 [node name="Task" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -33,27 +33,23 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_vertical = 3
-text = "Highlight tutorial
-# Highlights
+text = "Example script
+
+# First step
+
+## Dialog
+Dialogs can be defined using two hash symbols followed by its title.
 
 ## 
-We can highlight editor docks too.
-;highlight scene_tree
-;highlight file_system
-;highlight inspector
-;highlight tutor
+Dialog definitions with no titles will use the last title.
 
-## Scene
-;highlight scene_tree
+# Second step
 
-## FileSystem
-;highlight file_system
+## 
+Steps with no dialog titles will use the step title.
 
-## Inspector
-;highlight inspector
-
-## Tutor
-;highlight tutor"
+## New Title
+Now the title has changed."
 
 [node name="Go" type="Button" parent="Task"]
 custom_minimum_size = Vector2(64, 26)
