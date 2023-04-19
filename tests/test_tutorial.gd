@@ -10,8 +10,8 @@ func test_all_tutorials():
 	
 	for file in files:
 		if file.ends_with(".tres"):
-			var tutorial : Tutorial = load(path+file)
-			tutorial.parse()
+			var tutorial_file : Tutorial = load(path+file)
+			tutorial_file.parse()
 	
 	assert_has(files, "dialogs.tres")
 	assert_has(files, "highlights.tres")
@@ -62,17 +62,42 @@ func test_multiple_steps_and_dialogs():
 	assert_eq(tutorial.steps[1].dialogs[0].text, "Welcome to the tutorial.")
 
 
+func test_no_dialog_title():
+	tutorial.parse("# Title\n## \nThis dialog's title should match the step's.")
+	assert_eq(tutorial.steps.size(), 1)
+	assert_eq(tutorial.steps[0].title, "Title")
+	assert_eq(tutorial.steps[0].dialogs.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs[0].title, "Title")
 
 
+func test_highlights():
+	tutorial.parse("# Step 1\n## Dialog 1\nHello, World!\n;highlight scene_tree\n## Dialog 2\nWelcome to the tutorial.\n;highlight file_system")
+	assert_eq(tutorial.steps.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs.size(), 2)
+	assert_eq(tutorial.steps[0].dialogs[0].highlights, ["scene_tree"])
+	assert_eq(tutorial.steps[0].dialogs[1].highlights, ["file_system"])
 
 
+func test_empty_highlight_line():
+	tutorial.parse("# Step 1\n## Dialog 1\nHello, World!\n;highlight \n;highlight inspector")
+	assert_eq(tutorial.steps.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs[0].highlights, ["inspector"])
 
 
+func test_improper_highlight_line():
+	tutorial.parse("# Step 1\n## Dialog 1\nHello, World!\n; highlight tutor\n;highlight scene_tree")
+	assert_eq(tutorial.steps.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs[0].highlights, ["scene_tree"])
 
 
+func test_improper_markdown_headings():
+	tutorial.parse("Step 1\n## Dialog 1\nHello, World!")
+	assert_eq(tutorial.steps.size(), 1)
 
 
-
-
-
-
+func test_extra_whitespace():
+	tutorial.parse("   # Step 1   \n  ## Dialog 1  \n   Hello, World!  \n   ;highlight   inspector  ")
+	assert_eq(tutorial.steps.size(), 1)
+	assert_eq(tutorial.steps[0].dialogs.size(), 0)

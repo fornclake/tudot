@@ -5,8 +5,9 @@
 [resource]
 script = ExtResource("1_p6aql")
 text = "Highlight tutorial
-# Highlights
+# Highlights 
 ## 
+
 We can highlight editor docks too.
 ;highlight scene_tree
 ;highlight file_system

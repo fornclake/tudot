@@ -3,7 +3,10 @@
 
 const MAX_RECTS = 4 # Maximum number of shader uniforms in Overlay/BG
 
-@export var tutorial : Tutorial
+@export var tutorial : Tutorial:
+	set(value):
+		tutorial = value
+		tutorial.parse()
 
 # Rectangles passed to overlay shader
 var highlighted_rects : Array[Rect2] = []
@@ -41,11 +44,8 @@ func _ready():
 
 func _run_tutorial():
 	tutorial.parse()
-	task_label.text = tutorial.text
-	
 	for step in tutorial.steps:
 		await _play_step(step)
-	
 	overlay_popup.hide()
 
 
@@ -95,13 +95,14 @@ func _play_step(step : Tutorial.Step):
 	while dialogs.size() > 0:
 		await _create_and_play_dialog(dialogs[0])
 		dialogs.pop_front()
+	
 
 
 # Get rects to highlight from dialog.
 func _highlight_from_dialog(dialog : Tutorial.Dialog):
 	highlighted_rects = []
 	
-	if !_hidden_components_found:
+	if not _hidden_components_found:
 		_find_hidden_components()
 	
 	for highlight in dialog.highlights:

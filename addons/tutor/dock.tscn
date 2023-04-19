@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c8vrlgdjdxvog"]
 
 [ext_resource type="Script" path="res://addons/tutor/dock.gd" id="1_rw4o7"]
-[ext_resource type="Resource" path="res://tutorials/dialogs.tres" id="2_s57vx"]
+[ext_resource type="Resource" path="res://tutorials/dialogs.tres" id="2_w0vkj"]
 [ext_resource type="Shader" path="res://addons/tutor/dim.gdshader" id="3_dt6qc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_uose7"]
@@ -21,7 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_rw4o7")
-tutorial = ExtResource("2_s57vx")
+tutorial = ExtResource("2_w0vkj")
 
 [node name="Task" type="VBoxContainer" parent="."]
 layout_mode = 2

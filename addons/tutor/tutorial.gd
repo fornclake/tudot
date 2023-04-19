@@ -1,97 +1,107 @@
 @tool class_name Tutorial extends Resource
-## Tutorial resource object.
+
+## Stores tutorial step data from parsed markdown text.
 ##
-## Parses steps and commands from markdown text.
+## The tutorial script uses a simple markdown-like format to define tutorial steps and dialogs.
+## It may contain headings, dialogs, and highlight commands.[br]
+## [codeblock]
+## # Step 1
+## ## Dialog 1
+## This text is displayed under the dialog box titled "Dialog 1"
+## ## Dialog 2
+## This dialog box highlights all available docks
+## ;highlight scene_tree
+## ;highlight file_system
+## ;highlight inspector
+## ;highlight tutor
+## # Step 2
+## ## 
+## Dialogs with no titles will use the step's title.
+## [/codeblock]
 
-signal updated
+## Emitted when text has been parsed.
+signal parsed
 
-@export_multiline var text : String = ""
+## Markdown text to be parsed.
+@export_multiline var text : String
 
+## Holds parsed step data.
 var steps : Array[Step] = []
 
+# Step class holds information about each step in the tutorial.
 class Step:
 	var title := "Tutorial"
-	var description := "Follow the on-screen prompts." # displays in dock
 	var dialogs : Array[Dialog] = []
-	var conditions : Array[Condition] = []
+	
+	func _init(p_title := ""):
+		title = p_title
 
+# Dialog class holds information about the dialog within a tutorial step.
 class Dialog:
 	var title = ""
 	var text = ""
-	var highlights = []
-
-class Condition:
-	enum Type {ONE_SHOT, CONTINUOUS}
-	enum Operator {EQUALS, GREATER_THAN, LESS_THAN, GREATER_EQUAL, LESS_EQUAL}
-	var object : Object
-	var property : String
-	var operator : Operator = Operator.EQUALS
-	var requires : Array[Condition] = []
+	var highlights = [] # editor controls to highlight while dialog active
+	
+	func _init(p_title := ""):
+		title = p_title
 
 
-## Parses text and populates steps array.
+## Parses text and populates steps array. [member p_text] defaults to [member text] property.
 func parse(p_text : String = text) -> void:
+	if p_text.is_empty():
+		push_error("Text property is empty. Skipping parsing.")
+		return
+	
 	steps = []
 	
-	# Add a new line if there isn't one for heading tags
-	if p_text.begins_with("# "):
-		p_text = "\n" + p_text
+	# Ensure text begins with new line for heading tags.
+	p_text = "\n" + p_text.strip_edges()
 	p_text = _tag_headings(p_text)
 	
-	# Split text by step and create step objects
-	var step_split = p_text.split("</s>", false)
+	# Split text by step and create step objects.
+	var step_split := p_text.split("</s>", false)
 	for step_text in step_split:
-		if step_text.strip_escapes().is_empty():
-			continue
-		var new_step = _create_step_from_text(step_text)
-		steps.append(new_step)
+		if not step_text.strip_escapes().is_empty():
+			steps.append(_create_step_from_text(step_text))
 	
-	updated.emit()
+	parsed.emit()
 
 
-# Mark headings with temporary tags
+# Mark headings with temporary tags.
 func _tag_headings(text : String) -> String:
 	return text.replace("\n## ", "</d>").replace("\n# ", "</s>") # dialog, step tag
 
 
 # Constructs a step object from a string.
 func _create_step_from_text(step_text : String) -> Step:
-	var new_step = Step.new()
-	var title = step_text.split("\n", true, 2)[0].split("</d>")[0]
-	new_step.title = title
+	var title = step_text.get_slice("\n", 0).get_slice("</d>", 0).strip_edges()
+	var new_step = Step.new(title)
 	
-	# Create dialog objects
+	# Skip this loop if no dialog tags are found.
 	var dialog_split = [] if step_text.find("</d>") == -1 else step_text.right(-step_text.find("</d>")).split("</d>", false)
-	while dialog_split.size() > 0:
-		var new_dialog = _create_dialog_from_text(dialog_split[0], title)
+	for dialog_text in dialog_split:
+		var new_dialog = _create_dialog_from_text(title, dialog_text)
 		new_step.dialogs.append(new_dialog)
 		title = new_dialog.title
-		dialog_split.remove_at(0)
 	
 	return new_step
 
 
 # Constructs a dialog object from a string.
-func _create_dialog_from_text(dialog_text : String, dialog_title : String) -> Dialog:
-	var new_dialog = Dialog.new()
-	var title_split = dialog_text.split("\n", false, 1)
-	print(title_split)
+func _create_dialog_from_text(dialog_title : String, dialog_text : String) -> Dialog:
+	var lines := dialog_text.split("\n")
 	
-	# Update title if there is one
-	if title_split.size() > 1:
-		dialog_title = title_split[0]
-		title_split.remove_at(0)
+	if not lines[0].is_empty():
+		dialog_title = lines[0].strip_edges()
+		lines.remove_at(0)
 	
-	# Read lines for commands
-	var dialog_body = title_split[0]
-	var lines = dialog_body.split("\n")
+	var new_dialog = Dialog.new(dialog_title)
+	
 	for line in lines:
-		if line.begins_with(";highlight "):
-			# add parameters to highlights array, then remove line from displayed dialog text
+		line = line.strip_escapes()
+		if line.begins_with(";highlight ") and not line.split(" ")[1].is_empty():
 			new_dialog.highlights.append(line.trim_prefix(";highlight ").strip_edges())
-			dialog_body = dialog_body.replace(line, "").strip_escapes()
-	
-	new_dialog.title = dialog_title
-	new_dialog.text = dialog_body
+		else:
+			new_dialog.text += line
 	
 	return new_dialog
