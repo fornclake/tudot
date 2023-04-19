@@ -38,9 +38,9 @@ class Step:
 
 # Dialog class holds information about the dialog within a tutorial step.
 class Dialog:
-	var title = ""
-	var text = ""
-	var highlights = [] # editor controls to highlight while dialog active
+	var title := ""
+	var text := ""
+	var highlights : Array[String] = [] # editor controls to highlight while dialog active
 	
 	func _init(p_title := ""):
 		title = p_title
@@ -54,9 +54,8 @@ func parse(p_text : String = text) -> void:
 	
 	steps = []
 	
-	# Ensure text begins with new line for heading tags.
-	p_text = "\n" + p_text.strip_edges()
-	p_text = _tag_headings(p_text)
+	# Ensure text begins with new line for heading tags, then replace hashtags with temporary tags
+	p_text = ("\n" + p_text.strip_edges()).replace("\n## ", "</d>").replace("\n# ", "</s>") # dialog, step tag
 	
 	# Split text by step and create step objects.
 	var step_split := p_text.split("</s>", false)
@@ -65,11 +64,6 @@ func parse(p_text : String = text) -> void:
 			steps.append(_create_step_from_text(step_text))
 	
 	parsed.emit()
-
-
-# Mark headings with temporary tags.
-func _tag_headings(text : String) -> String:
-	return text.replace("\n## ", "</d>").replace("\n# ", "</s>") # dialog, step tag
 
 
 # Constructs a step object from a string.
@@ -99,6 +93,7 @@ func _create_dialog_from_text(dialog_title : String, dialog_text : String) -> Di
 	
 	for line in lines:
 		line = line.strip_escapes()
+		# Search for commands. TODO Change this to a command:parameters dict
 		if line.begins_with(";highlight ") and not line.split(" ")[1].is_empty():
 			new_dialog.highlights.append(line.trim_prefix(";highlight ").strip_edges())
 		else:
