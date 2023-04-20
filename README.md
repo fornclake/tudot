@@ -62,7 +62,7 @@ Current highlightable elements are `scene_tree`, `file_system`, `inspector`, and
 
 ## Limitations
 
-- Currently Tudot only works in the Forward+ or Mobile backends. If you are using the Compatibility backend, the overlay transparency will be black.
+Currently Tudot only works in the Forward+ or Mobile backends. If you are using the Compatibility backend, the overlay transparency will be black.
 
 
 ## Contributing
