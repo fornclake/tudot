@@ -35,7 +35,7 @@ func _highlight_from_dialog(dialog : Tutorial.Dialog) -> void:
 		var rect : Rect2
 		match highlight:
 			"inspector": rect = _editor_interface.get_inspector().get_node("../../").get_global_rect()
-			"tutor": rect = _tutor.dock.get_global_rect()
+			"tutor": rect = _tutor.dock.get_parent().get_global_rect()
 			"file_system": rect = _editor_interface.get_file_system_dock().get_parent().get_global_rect()
 			"scene_tree": rect = _scene_tree_dock.get_parent().get_global_rect()
 			"import": rect = _import_dock.get_parent().get_global_rect()
@@ -100,6 +100,12 @@ func create_and_play_dialog(dialog : Tutorial.Dialog) -> void:
 		printerr("Failed to create dialog.")
 		return
 	
+	var dialog_button = new_dialog.get_node(new_dialog.get_meta("button"))
+	
+	if not dialog_button:
+		printerr("Dialog button node not found. Aborting dialog.")
+		return
+	
 	add_child(new_dialog)
 	visibility_changed.connect(new_dialog.queue_free)
 	
@@ -112,4 +118,5 @@ func create_and_play_dialog(dialog : Tutorial.Dialog) -> void:
 func show() -> void:
 	position = _tutor.get_window().position
 	size = _tutor.get_window().size
-	popup()
+	if not visible:
+		popup()
