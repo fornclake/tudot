@@ -39,7 +39,7 @@ specific elements of the Godot Editor, making it an excellent tool for onboardin
 To create a new tutorial, follow these steps:
 
 
-1. In the Godot Editor, click on the FileSystem tab and navigate to the folder where you want to create the tutorial.
+1. In the Godot Editor, click on the FileSystem tab and navigate to the `tutorials` folder in the addon's root directory.
 2. Right-click and choose New Resource....
 3. In the search bar, type Tutorial and select the Tutorial resource type.
 4. Click Create, then save the new resource file (.tres) with a descriptive name.
