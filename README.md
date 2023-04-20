@@ -1,6 +1,6 @@
 # Tudot
 
-Provides an interactive tutorial system for the Godot Editor. Tutorials can users through a series of steps and highlights
+Provides an interactive tutorial system for the Godot Editor. Tutorials can guide users through a series of steps and highlights
 specific elements of the Godot Editor, making it an excellent tool for onboarding new developers or teaching specific tasks.
 
 
