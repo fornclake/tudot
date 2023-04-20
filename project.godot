@@ -10,10 +10,10 @@ config_version=5
 
 [application]
 
-config/name="Tutor"
+config/name="Tudot"
 config/features=PackedStringArray("4.0", "Mobile")
 config/icon="res://icon.svg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/re-enable/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/tutor/plugin.cfg")
+enabled=PackedStringArray("res://addons/re-enable/plugin.cfg", "res://addons/gut/plugin.cfg", "res://addons/tudot/plugin.cfg")

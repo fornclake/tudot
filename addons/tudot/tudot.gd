@@ -11,9 +11,10 @@ var file_dialog : FileDialog
 
 signal tutorial_selected
 
+
 # Initialize overlay and dock.
 func _enter_tree():
-	dock = preload("res://addons/tutor/dock.tscn").instantiate()
+	dock = preload("res://addons/tudot/dock.tscn").instantiate()
 	dock.get_node("Task/Buttons/Go").pressed.connect(play)
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
 	

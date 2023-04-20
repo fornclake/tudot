@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://c8vrlgdjdxvog"]
 
-[ext_resource type="Script" path="res://addons/tutor/overlay.gd" id="1_awiip"]
-[ext_resource type="Shader" path="res://addons/tutor/overlay.gdshader" id="2_12t5f"]
+[ext_resource type="Script" path="res://addons/tudot/overlay.gd" id="1_uvqwx"]
+[ext_resource type="Shader" path="res://addons/tudot/overlay.gdshader" id="2_0mpuj"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oo1an"]
-shader = ExtResource("2_12t5f")
+shader = ExtResource("2_0mpuj")
 shader_parameter/border_color = Color(0.439216, 0.729412, 0.980392, 1)
 shader_parameter/border_size = 1.0
 shader_parameter/rect0 = Rect2(1642, 527, 270, 474)
@@ -66,7 +66,7 @@ text = "Go"
 [node name="Overlay" type="Popup" parent="."]
 transparent_bg = true
 transparent = true
-script = ExtResource("1_awiip")
+script = ExtResource("1_uvqwx")
 
 [node name="BG" type="ColorRect" parent="Overlay"]
 clip_children = 2
@@ -86,5 +86,5 @@ size = Vector2i(640, 480)
 min_size = Vector2i(640, 480)
 ok_button_text = "Open"
 file_mode = 0
-root_subfolder = "res://addons/tutor/tutorials/"
+root_subfolder = "res://addons/tudot/tutorials/"
 filters = PackedStringArray("*.tres")

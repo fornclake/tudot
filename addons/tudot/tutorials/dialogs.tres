@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="Tutorial" load_steps=2 format=3 uid="uid://qlc60cwralyb"]
+[gd_resource type="Resource" script_class="Tutorial" load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://addons/tutor/tutorial.gd" id="1_p6aql"]
+[ext_resource type="Script" path="res://addons/tudot/tutorial.gd" id="1_p6aql"]
 
 [resource]
 script = ExtResource("1_p6aql")

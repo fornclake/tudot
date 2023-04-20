@@ -76,7 +76,7 @@ func _update_shader_parameters() -> void:
 
 # Create a dialog instance from a Tutorial.Dialog object
 func _create_dialog(dialog: Tutorial.Dialog) -> PanelContainer:
-	var new_dialog = preload("res://addons/tutor/dialog.tscn").instantiate()
+	var new_dialog = preload("res://addons/tudot/dialog.tscn").instantiate()
 	var text_node = new_dialog.get_node(new_dialog.get_meta("text"))
 	var title_node = new_dialog.get_node(new_dialog.get_meta("title"))
 	
