@@ -1,2 +1,7 @@
-# Godot 4+ specific ignores
 .godot/
+addons/editor_nav/
+addons/gut/
+addons/re-enable/
+.gut_editor_config.json
+.gut_editor_shortcuts.cfg
+icon.svg
