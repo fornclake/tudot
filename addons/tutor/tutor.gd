@@ -15,6 +15,7 @@ func _enter_tree():
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
 	
 	overlay = dock.get_node("Overlay")
+	overlay.visible = false
 	overlay._tutor = self
 	overlay._editor_interface = get_editor_interface()
 

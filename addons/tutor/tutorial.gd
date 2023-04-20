@@ -49,7 +49,7 @@ class Dialog:
 ## Parses text and populates steps array. [member p_text] defaults to [member text] property.
 func parse(p_text : String = text) -> void:
 	if p_text.is_empty():
-		push_error("Text property is empty. Skipping parsing.")
+		push_warning("Text property is empty. Skipping parsing.")
 		return
 	
 	steps = []

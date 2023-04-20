@@ -4,7 +4,7 @@ extends GutTest
 
 
 func test_all_tutorials():
-	var path = "res://tutorials/"
+	var path = "res://addons/tutor/tutorials/"
 	var dir = DirAccess.open(path)
 	var files = dir.get_files()
 	
